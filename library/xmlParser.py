@@ -1,5 +1,4 @@
 import clr
-
 clr.AddReference("System.Core")
 
 import System
@@ -17,7 +16,6 @@ class XmlParser() :
     def __init__(self) :
         """
         Default constructor.
-        @parameter {XElement}  element
         """
         pass
 

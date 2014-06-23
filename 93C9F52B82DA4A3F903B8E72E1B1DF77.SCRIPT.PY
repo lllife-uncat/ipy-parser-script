@@ -31,10 +31,9 @@ from MongoDB.Bson import *
 import sys
 sys.path.append(r"E:\runtime\generator.env\Template.OLI_Template\Item.Script")
 
-from template.prototype import TestPrototype
+from template.testPrototype import TestPrototype
+from template.prototype import PrototypeProcessor
 
-class Item(object) :
-    pass
 
 class ParsingManager() :
     """
@@ -110,13 +109,15 @@ class ParsingManager() :
 
             if templateId == "UWLD001" :
                 prototype = TestPrototype(records)
+                processor = PrototypeProcessor(prototype)
+                rs = processor.process()
 
                 # extract attributes
-                atts = prototype.getAttributes()
+                atts = rs.attributes
                 self.assignAttributes(item, atts)
 
                 # extract Collections
-                colls = prototype.getCollections()
+                colls = rs.collections
                 self.assignCollections(item, colls)
 
             results.append(item)

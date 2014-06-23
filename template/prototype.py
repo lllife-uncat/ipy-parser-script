@@ -7,97 +7,67 @@ import System
 clr.ImportExtensions(System.Linq)
 clr.ImportExtensions(System.Xml.XPath)
 
+import copy
 from library.xmlParser import XmlParser
 
-class Expendo(object) :
+class ProcessResult(object) :
+    """ Processing output """
+    pass
+
+class Expando(object) :
     """
     Simple dynamic object, we can extend propery dynamically.
     """
     pass
 
-class Template() :
-    """
-    Template prototype for all document in system.
-    @attribute {Expendo} attributes - List of simple type.
-    @attribute {Expendo} collections - List of complex type to generate as table.
-    @attribute {Expendo} images - List of image in template.
-    @attribute {String} fileName - File name in ECM.
-    @attribute {String} path - Path in ECM.
-    @attribute {Exepndo} properties - List of ECM property.
-    """
+class PrototypeProcessor(object) :
+    """ Prototype processor """
 
-    def __init__(self):
-        """
-        Intilize class attributes.
-        """
-        self.attributes = Expendo()
-        self.collections = Expendo()
-        self.images = Expendo()
-        self.fileName = ""
-        self.path = ""
-        self.properties = Expendo()
+    def __init__(self, prototype) :
+        """ Initialize variable """
+        self.parser = XmlParser()
+        self.records = prototype.getRecords()
+        self.attributes = prototype.getAttributes()
+        self.collections = prototype.getCollections()
 
+    def process(self):
+        rs = ProcessResult()
 
-class Prototype() :
-    def __init__(self, records) :
-        self.attributes = Expendo()
-        self.collections = Expendo()
-        self.images = Expendo()
-
-        self.defineAttributes()
-        self.defineCollections()
-
+        records = self.records
         record = records.ElementAt(0)
-        parser = XmlParser()
-        parser.parseAttributes(self.attributes, record)
-        parser.parseCollections(self.collections, records)
 
-    def defineAttributes(self) :
-        atts = self.attributes
-        atts.A001 = "policy_holder_1"
-        atts.A002 = "policy_holder_2"
-        atts.A003 = "address1"
-        atts.A004 = "address2"
-        atts.A005 = "address3"
-        atts.A006 = "district"
-        atts.A007 = "province"
-        atts.A008 = "postalcode"
-        atts.A009 = "letter_number"
+        attributes = self.attributes
+        collections = self.collections
 
-    def defineCollections(self):
-        colls = self.collections
-        colls.C001 = {
-            "A001": "policy_holder_1",
-            "A002": "policy_holder_2",
-            "A003": "address1",
-            "A004": "address2",
-            "A005": "address3",
-            "A006": "district",
-            "A007": "province",
-            "A008": "postalcode",
-            "A009": "letter_number"
-        }
+        newAtts = self.parseAttributes(attributes, record)
+        newColls = self.parseCollections(collections, records)
 
-    def getAttributes(self) :
-        atts = self.attributes
+        rs.attributes = newAtts
+        rs.collections = newColls
+        return rs
+
+    def parseAttributes(self, attributes , record):
+        atts = copy.deepcopy(attributes)
+        self.parser.parseAttributes(atts, record)
         return atts
 
-    def getCollections(self) :
-        colls = self.collections
+    def parseCollections(self, collections, records):
+        colls = copy.deepcopy(collections)
+        self.parser.parseCollections(colls, records)
         return colls
 
-    def getPath(self):
-        return ""
+class Prototype(object)  :
 
-    def getFileName(self) :
-        return ""
+    def __init__(self, records):
+        self.records = records
 
-    def getImages(self):
-        imgs = self.images
-        return imgs
+    def getRecords(self) :
+        return self.records;
 
-class TestPrototype(Prototype) :
-    def __init__(self, element) :
-        Prototype.__init__(self, element)
+    def getAttributes(self):
+        print "Prototype.getAttributes()"
+        raise NotImplementedError("Should implemented getAttributes().")
 
-
+    def getCollections(self):
+        print "Prototype.getCollections()"
+        raise NotImplementedError("Should implement getCollections().")
