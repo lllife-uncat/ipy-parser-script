@@ -1,24 +1,11 @@
-import clr
-clr.AddReference("System.Xml")
-clr.AddReference("System.Xml.Linq")
-clr.AddReference("System.Core")
+from library.xmlParser import XmlParser
+from library.models import ProcessResult
+import copy
 
 import System
-clr.ImportExtensions(System.Linq)
-clr.ImportExtensions(System.Xml.XPath)
-
-import copy
-from library.xmlParser import XmlParser
-
-class ProcessResult(object) :
-    """ Processing output """
-    pass
-
-class Expando(object) :
-    """
-    Simple dynamic object, we can extend propery dynamically.
-    """
-    pass
+import clr
+#clr.AddReference("System.Xml")
+#clr.ImportExtensions(System.Xml.XPath)
 
 class PrototypeProcessor(object) :
     """ Prototype processor """
@@ -34,7 +21,7 @@ class PrototypeProcessor(object) :
         rs = ProcessResult()
 
         records = self.records
-        record = records.ElementAt(0)
+        record = self.records[0]
 
         attributes = self.attributes
         collections = self.collections
@@ -55,19 +42,3 @@ class PrototypeProcessor(object) :
         colls = copy.deepcopy(collections)
         self.parser.parseCollections(colls, records)
         return colls
-
-class Prototype(object)  :
-
-    def __init__(self, records):
-        self.records = records
-
-    def getRecords(self) :
-        return self.records;
-
-    def getAttributes(self):
-        print "Prototype.getAttributes()"
-        raise NotImplementedError("Should implemented getAttributes().")
-
-    def getCollections(self):
-        print "Prototype.getCollections()"
-        raise NotImplementedError("Should implement getCollections().")

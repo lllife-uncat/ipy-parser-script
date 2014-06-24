@@ -1,16 +1,18 @@
+# Import .net clr module.
 import clr
 clr.AddReference("System.Core")
 
+# Import .Net extension method from System.Xml.Xpath,
+# for 'XPathSelectElement'.
 import System
 clr.ImportExtensions(System.Xml.XPath)
 
-class Expando(object) :
-    pass
+# Import expando prototype from models.
+from library.models import Expando
 
 class XmlParser() :
     """
-    Class XmlParser - Parse input xml update input definition.
-    @attribute {XElement} element - Element cantain of definition of xml in record section.
+    Class XmlParser - Parse input xml.
     """
 
     def __init__(self) :
@@ -22,8 +24,10 @@ class XmlParser() :
     def parseAttributes(self, attributeDef, element) :
         """
         Use extension method from XPath to extract value.
-        @para{Expendo} attributeDef - Expendo object represent all attribute in template.
-        @return {Expendo} - An update version of attributeRef.
+            attributeDef - Expando object represent all attribute in template.
+            element - XElement object.
+
+        return update version of attributeRef.
         """
 
         atts = [x for x in attributeDef.__dict__]
@@ -40,9 +44,10 @@ class XmlParser() :
     def parseCollections(self, collectionDef, records) :
         """
         Extract collection from record section.
-        @param {Expando} colletionRef - Collection definition.
-        @param {XElement} records - Record section.
-        @return {Expando} - Update version of collectionDef
+            colletionRef - Collection definition.
+            records - Record section.
+
+        return {Expando} - Update version of collectionDef.
         """
         collNames= [x for x in collectionDef.__dict__]
         collValues = [x for x in collectionDef.__dict__.values()]

@@ -31,9 +31,8 @@ from MongoDB.Bson import *
 import sys
 sys.path.append(r"E:\runtime\generator.env\Template.OLI_Template\Item.Script")
 
-from template.testPrototype import TestPrototype
-from template.prototype import PrototypeProcessor
-
+from library.prototypeProcessor import PrototypeProcessor
+from library.templateLoader import TemplateLoader
 
 class ParsingManager() :
     """
@@ -71,18 +70,17 @@ class ParsingManager() :
 
     def extractRecords(self, itemElement) :
         records = self.extractElements(itemElement.ToString(), "record")
-        return records
+        return self.createRecordList(records)
+
+    def createRecordList(self, records) :
+        rs = [x for x in records]
+        return rs
 
     def start(self, inputXml) :
-        """
-        Start parsing xml.
+        """ Start parsing xml.
         - Extract type, batch, process, location, batchno and elixirid for future reference.
         - Use sax parser to extract items.
         - Walk over item and extract attribute and collection.
-
-        @parameter {String} InputXml - Xml from C# application.
-        @return {List} - List of item extract from script.
-
         """
 
         typeElement = self.extractFirstElement(inputXml, "type")
@@ -104,12 +102,27 @@ class ParsingManager() :
             item = Item()
             item.Collections = {}
 
+            # Predefined attribute,
+            # Every item contain following attributes.
+            # TYPE -
+            # PROCESS -
+            # LOCATION -
+            # BATCHNO -
+            # ELIXIERID -
+            item.TYPE = typeElement
+            item.PROCESS = process
+            item.LOCATION = location
+            item.BATCHNO = batchno
+            item.ELIXIREID = elixirid
+
+            # Extract templateid and records
             templateId = element.Element("templateid").Value
             records = self.extractRecords(element)
 
-            if templateId == "UWLD001" :
-                prototype = TestPrototype(records)
-                processor = PrototypeProcessor(prototype)
+            if templateId != "-UWLD001" :
+                Template = TemplateLoader.load(templateId)
+                templateIns = Template(records)
+                processor = PrototypeProcessor(templateIns)
                 rs = processor.process()
 
                 # extract attributes

@@ -1,10 +1,11 @@
-from template.prototype import Prototype, Expando
+from library.models import Expando
+from library.prototype import Prototype
 
-class TestPrototype(Prototype) :
+class NBLD005(Prototype) :
 
     def __init__(self, records) :
-        #Prototype.__init__(self, records)
-        super(TestPrototype, self).__init__(records)
+        #super(TestPrototype, self).__init__(records)
+        Prototype.__init__(self, records)
 
     def getAttributes(self) :
         atts = Expando()
